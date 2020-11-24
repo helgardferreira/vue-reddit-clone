@@ -1,16 +1,36 @@
 <template>
     <div id="app">
-        <HelloWorld msg="Welcome to Your Vue.js App" />
+        <Post
+            v-for="(post, index) in posts"
+            :key="index"
+            :post-data="post"
+            :rank="index + 1"
+        />
     </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue';
+import Post from './components/Post.vue';
 
 export default {
     name: 'App',
     components: {
-        HelloWorld,
+        Post,
+    },
+    data() {
+        return {
+            posts: [],
+        };
+    },
+    mounted() {
+        fetch('https://www.reddit.com/.json')
+            .then((res) => res.json())
+            .then((obj) => {
+                // Mapped identity function
+                const posts = obj.data.children.map(({ data, }) => data);
+
+                this.posts = posts;
+            });
     },
 };
 </script>
