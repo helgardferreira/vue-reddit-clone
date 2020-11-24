@@ -17,12 +17,14 @@
         </a>
         <div class="entry">
             <div>
-                <a
-                    :href="url"
-                    class="title"
-                >
-                    {{ title }}
-                </a>
+                <div>
+                    <a
+                        :href="url"
+                        class="title"
+                    >
+                        {{ title }}
+                    </a>
+                </div>
                 <div
                     v-if="showExpando"
                     class="expando-button"
@@ -36,6 +38,19 @@
                 <p class="tagline">
                     submitted {{ createdAt }} hours ago by {{ author }} to
                     {{ subredditName }}
+                    <span v-if="awards.length > 0">
+                        <div
+                            v-for="award in awards"
+                            :key="award.url"
+                            class="award"
+                        >
+                            <img
+                                height="12"
+                                width="12"
+                                :src="award.iconUrl"
+                            >{{ award.count }}
+                        </div>
+                    </span>
                 </p>
                 <a
                     :href="permalink"
@@ -173,6 +188,12 @@ export default {
 
             return unescape(this.postData.media_embed.content);
         },
+        awards() {
+            return this.postData.all_awardings.map(({icon_url, count, }) => ({
+                iconUrl: icon_url,
+                count,
+            }));
+        },
         showExpando() {
             return this.previewImage || this.richtext || this.previewVideoUrl || this.mediaEmbed;
         },
@@ -198,11 +219,21 @@ a {
 }
 
 .expando-button {
-    height: 25px;
-    width: 25px;
+    height: 30px;
+    width: 30px;
     background-size: contain;
     background-color: #c6c6c6;
     border-radius: 4px;
+    margin-right: 5px;
+    float: left;
+}
+
+.award {
+    display: inline-block;
+}
+
+.award:not(:last-of-type) {
+    margin-right: 4px;
 }
 
 .expando-button:hover {
